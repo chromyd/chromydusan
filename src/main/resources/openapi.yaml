@@ -1,0 +1,219 @@
+---
+openapi: 3.0.1
+servers:
+    - url: '/bike-rental-example-part'
+      description: BizHub-Umgebung
+    - url: 'http://localhost:8080'
+      description: Lokal
+info:
+  description: |-
+    This service provides various functions to search for bikes and rent them. It's is an example for the DevConAPI training based on an [example from O&#39;Reilly](https://oreilly.com/learning/how-to-design-a-restful-api-architecture-from-a-human-language-spec).
+
+    The abstracted and simplified workflow allows to search for stations.
+  version: '1.0'
+  title: Bike-Rental
+  contact: 
+    name: rAPIdo
+    url: 'https://db.de/rapido'
+tags:
+  - name: Stations
+paths:
+  /stations:
+    get:
+      tags:
+        - Stations
+      description: Retrieve a collection of bike rental stations.
+      operationId: getStations
+      parameters:
+        - name: minimumAvailableBikes
+          in: query
+          schema:
+            type: integer
+          required: false
+          description: Filter by a minimum amount of available bikes on each station to show only stations fulfilling this.
+      responses:
+        '200':
+          description: Successful operation with result collection.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Station'
+  /rentals:
+    post:
+      tags:
+        - Rentals
+      description: Create bike rental
+      operationId: createRental
+      requestBody:
+        description: Rental for a bike
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rental'
+      responses:
+        '201':
+          description: Successful operation. Bike rental created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+    get:
+      tags:
+        - Rentals
+      description: Retrieve all bike rentals.
+      operationId: getRentals
+      responses:
+        '200':
+          description: Successful operation with result collection.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rental'
+  /rentals/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: Id for the specific rental
+    get:
+      tags:
+        - Rentals
+      description: Retrieve a rental for an Id.
+      operationId: getRental
+      responses:
+        '200':
+          description: Successful operation with result rental.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+    patch:
+      tags:
+        - Rentals
+      description: Update a specific rental.
+      operationId: updateRental
+      requestBody:
+        description: Rental with updated fields for an existing rental.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalPatch'
+      responses:
+        '200':
+          description: Successful operation with result rental.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+    delete:
+      tags:
+        - Rentals
+      description: Delete a specific rental.
+      operationId: deleteRental
+      responses:
+        '204':
+          description: Successful deletion of the specific rental.
+components:
+  schemas:
+    Station:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique id
+          example: 2
+        name:
+          type: string
+          description: Name and elaborated description of the station.
+          example: Brooklyn Bridge
+        location:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            type: number
+            format: double
+          description: Exact geolocation (latitude and longitude) of the station.
+          example:
+            - 40.7
+            - -73
+        availableBikesQuantity:
+          type: integer
+          description: Amount of currently available bikes at the station.
+          example: 2
+      required:
+        - id
+        - name
+        - location
+    Rental:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: Unique id
+          example: 2
+        startStationId:
+          type: integer
+          description: Id of the start station.
+          example: 55
+        endStationId:
+          type: integer
+          description: Id of the end station.
+          example: 55
+        bikeNumber:
+          type: integer
+          description: Bike number.
+          example: 123
+        startTime:
+          type: string
+          format: date-time
+          description: Id of the start station.
+          example: '2022-03-23T10:31:00Z'
+        endTime:
+          type: string
+          format: date-time
+          description: Id of the start station.
+          example: '2022-03-23T10:31:00Z'
+      required:
+        - id
+        - startStationId
+        - endStationId
+        - bikeNumber
+        - startTime
+    RentalPatch:
+      type: object
+      properties:
+        startStationId:
+          type: integer
+          description: Id of the start station.
+          example: 55
+        endStationId:
+          type: integer
+          description: Id of the end station.
+          example: 55
+        bikeNumber:
+          type: integer
+          description: Bike number.
+          example: 123
+        startTime:
+          type: string
+          format: date-time
+          description: Id of the start station.
+          example: '2022-03-23T10:31:00Z'
+        endTime:
+          type: string
+          format: date-time
+          description: Id of the start station.
+          example: '2022-03-23T10:31:00Z'
+      
+      
+        
