@@ -12,8 +12,8 @@ import java.util.List;
 public class StationsController implements StationsApi {
     @Override
     public ResponseEntity<List<Station>> getStations(Integer minimumAvailableBikes) {
-        var nyCity = new Station().id(1).name("Big Apple").location(List.of(Double.valueOf(57.5),Double.valueOf(-14)));
-        var la = new Station().id(1).name("LA").location(List.of(Double.valueOf(55.2),Double.valueOf(-16)));
+        var nyCity = new Station().id(1).name("Big Apple").location(List.of(Double.valueOf(57.5),Double.valueOf(-14))).availableBikesQuantity(0);
+        var la = new Station().id(1).name("LA").location(List.of(Double.valueOf(55.2),Double.valueOf(-16))).availableBikesQuantity(5);
         return ResponseEntity.ok(List.of(nyCity, la));
     }
 }
